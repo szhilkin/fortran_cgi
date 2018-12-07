@@ -1,0 +1,61 @@
+    PRINT*, 'Amplituda toka - ? (kA)'
+    read*, AIM
+    print*, 'Impuls toka  10/350 -(1)    0,25/100  - (2)'
+    print*, 'Bijeksponencialnyj impuls - (3)'
+    read*, ntok
+    if(ntok.eq.3) then
+        67    print*, 'Konstanty fronta (a) i hvosta (b) impulsa (1/mks)'
+        read*, at, bt
+        print*, 'Vremja maksimuma -', zr1, ' mks'
+        zr1 = tim
+        print*, 'Dlitelnost impulsa -', zr1, ' mks'
+
+    end if
+
+    print*, 'Dlina VL ot ob"ekta do PS-? (m)'
+    read*, DL
+    print*, 'Polnaja induktivnost VL -? (mkGn)'
+    read*, alW
+    print*, 'Udalenie tochki ot ob"ekta tochki udara molnii-(m)'
+    read*, dlo
+
+    alw1 = alw * dlo / dl
+    dlp = dl - dlo
+    alw2 = alw - alw1
+    print*, 'Soprotivlenie zazemlenie ob"ekta -? (Om)'
+    read*, RN
+    print*, 'Soprotivlenie zazemlenija VL na PS -? (Om)'
+    read*, RP
+    print*, 'Chislo podzemnyh kabelej 1 ili 2 ?'
+    read*, ncab
+    PRINT*, 'Dlina podzemnogo kabelja # 1 -?  (m)'
+    READ*, DL1
+    print*, 'Radius kabelja # 1- ? (m)'
+    read*, rs1
+    print*, 'Glubina ukladki kabelja # 1- ? (m)'
+    read*, h1
+    PRINT*, 'Coprotivlenie v konce kabelja # 1 - ?  (Om)'
+    READ*, RK1
+
+    if(ncab.eq.2) then
+        PRINT*, 'Dlina podzemnogo kabelja # 2 -?  (m)'
+        READ*, DL2
+        print*, 'Radius kabelja - # 2 ? (m)'
+        read*, rs2
+        print*, 'Glubina ukladki kabelja # 2- ? (m)'
+        read*, h2
+        PRINT*, 'Coprotivlenie v konce kabelja # 2 - ?  (Om)'
+        READ*, RK2
+    end if
+
+    print*, 'Udelnoe soprotivlenie grunta - ? (Om m)'
+    read*, ro
+    PRINT*, 'Raschetnoe vremja TM, vremennoj shag DT  (mks)'
+    READ*, TM, DT
+    print*, 'Shag po dline kanala (m)'
+    read*, dd
+    PRINT*, 'Shag vyvoda na displej TTT, na pechat (mks)'
+    READ*, TTT, TPP
+
+
+
