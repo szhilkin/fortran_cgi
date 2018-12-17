@@ -18,7 +18,7 @@ program dart_cgi
 
     use fcgi_protocol
 
-    implicit real*8 (a-h, o-y)
+    !implicit real*8 (a-h, o-y)
 
     type(DICT_STRUCT), pointer  :: dict => null() ! Initialisation is important!
     logical                     :: stopped = .false. ! set to true in respond() to terminate program
@@ -73,17 +73,23 @@ contains
         character(len=80)  :: scriptName
 
         ! variables for Example 2 (from test_cgi.f90 of FLIBS)
-        integer                           :: steps
+        integer                           :: steps, ntok, ncab
         real                              :: xmin
         real                              :: xmax
         character(len=20)                 :: fnName
         character(len=20)                 :: output
+
+        real                              :: AIM, at, bt
+        real                              :: DL, alW, dlo, RN, RP, DL1
+        real                              :: rs1, h1, RK1, DL2, rs2, h2, RK2, ro
+        real                              :: TM, DT, dd, TTT, TPP
 
         real, dimension(:), allocatable   :: x
         real, dimension(:), allocatable   :: y
 
         integer                           :: i
         logical                           :: okInputs
+        
 
         ! start of response
         ! lines starting with %REMARK% are for debugging & will not be copied to webserver
@@ -105,74 +111,105 @@ contains
             case ('/calc') ! See form in Example 2 below
                 ! keys are: function, minimum, maximum, steps, output
 
-                fnName  = '?'
-                xmin     = 0.0
-                xmax     = 1.0
-                steps    = 10
-                call cgi_get( dict, "function", fnName  )
-                call cgi_get( dict, "minimum",  xmin     )
-                call cgi_get( dict, "maximum",  xmax     )
-                call cgi_get( dict, "steps",    steps    )
-                call cgi_get( dict, "output",   output   )
+                !fnName   = '?'
+                !xmin     = 0.0
+                !xmax     = 1.0
+                !steps    = 10
 
-                write(unitNo, AFORMAT) '%REMARK% function='//trim(fnName )
-                write(unitNo, '(a,f8.3)') '%REMARK% minimum=', xmin
-                write(unitNo, '(a,f8.3)') '%REMARK% maximum=', xmax
-                write(unitNo, '(a,i4)') '%REMARK% steps=', steps
-                write(unitNo, AFORMAT) '%REMARK% output='//trim(output)
+                !call cgi_get( dict, "function", fnName  )
+                !call cgi_get( dict, "minimum",  xmin     )
+                !call cgi_get( dict, "maximum",  xmax     )
+                !call cgi_get( dict, "steps",    steps    )
+                !call cgi_get( dict, "output",   output   )
 
-                okInputs = .true.
-                if ( trim(fnName ) == '?' ) then
-                    write(unitNo,AFORMAT) '<br>No function selected'
-                    okInputs = .false.
-                endif
-                if ( abs(xmin) > 100.0 .or. abs(xmax) > 100.0 ) then
-                    write(unitNo,AFORMAT) '<br>Minimum and maximum should be in the range -100 to 100'
-                    okInputs = .false.
-                endif
-                if ( trim(fnName ) == 'J0' ) then
-                    write(unitNo,AFORMAT) '<br>Sorry, the Bessel function is not yet implemented'
-                    okInputs = .false.
-                endif
+                call cgi_get( dict, "AIM", AIM  )
+                call cgi_get( dict, "ntok", ntok  )
+                call cgi_get( dict, "at", at  )
+                call cgi_get( dict, "bt", bt  )
+                call cgi_get( dict, "DL", DL  )
+                call cgi_get( dict, "alW", alW  )
+                call cgi_get( dict, "dlo", dlo  )
+                call cgi_get( dict, "RN", RN  )
+                call cgi_get( dict, "RP", RP  )
+                call cgi_get( dict, "ncab", ncab  )
+                call cgi_get( dict, "DL1", DL1  )
+                call cgi_get( dict, "rs1", rs1  )
+                call cgi_get( dict, "h1", h1  )
+                call cgi_get( dict, "RK1", RK1  )
+                call cgi_get( dict, "DL2", DL2  )
+                call cgi_get( dict, "rs2", rs2  )
+                call cgi_get( dict, "h2", h2  )
+                call cgi_get( dict, "RK2", RK2  )
+                call cgi_get( dict, "ro", ro  )
+                call cgi_get( dict, "TM", TM  )
+                call cgi_get( dict, "DT", DT  )
+                call cgi_get( dict, "dd", dd  )
+                call cgi_get( dict, "TTT", TTT  )
+                call cgi_get( dict, "TPP", TPP  )
 
-                if (okInputs) then
+                !write(unitNo, AFORMAT) '%REMARK% function='//trim(fnName )
+                !write(unitNo, '(a,f8.3)') '%REMARK% minimum=', xmin
+                !write(unitNo, '(a,f8.3)') '%REMARK% maximum=', xmax
+                !write(unitNo, '(a,i4)') '%REMARK% steps=', steps
+                !write(unitNo, AFORMAT) '%REMARK% output='//trim(output)
+
+                call calc(unitNo, dble(AIM), ntok, dble(at), dble(bt), & 
+                dble(DL), dble(alW), dble(dlo), dble(RN), dble(RP), ncab, &
+                dble(DL1), dble(rs1), dble(h1), dble(RK1), dble(DL2), dble(rs2), &
+                dble(h2), dble(RK2), dble(ro), dble(TM), dble(DT), dble(dd), dble(TTT), dble(TPP))
+
+                !okInputs = .true.
+                !if ( trim(fnName ) == '?' ) then
+                !    write(unitNo,AFORMAT) '<br>No function selected'
+                !    okInputs = .false.
+                !endif
+                !if ( abs(xmin) > 100.0 .or. abs(xmax) > 100.0 ) then
+                !    write(unitNo,AFORMAT) '<br>Minimum and maximum should be in the range -100 to 100'
+                !    okInputs = .false.
+                !endif
+                !if ( trim(fnName ) == 'J0' ) then
+                !    write(unitNo,AFORMAT) '<br>Sorry, the Bessel function is not yet implemented'
+                !    okInputs = .false.
+                !endif
+
+                !if (okInputs) then
                     !
                     ! Actual processing
                     !
-                    allocate( x(0:steps), y(0:steps) )
+                    !allocate( x(0:steps), y(0:steps) )
 
-                    x = (/ (xmin + i*(xmax-xmin)/steps, i=0,steps) /)
-                    if ( trim(fnName ) == 'sin' ) then
-                        y = sin(x)
-                    endif
-                    if ( trim(fnName ) == 'cos' ) then
-                        y = cos(x)
-                    endif
+                    !x = (/ (xmin + i*(xmax-xmin)/steps, i=0,steps) /)
+                    !if ( trim(fnName ) == 'sin' ) then
+                    !    y = sin(x)
+                    !endif
+                    !if ( trim(fnName ) == 'cos' ) then
+                    !    y = cos(x)
+                    !endif
 
                     !
                     ! Write the HTML output or the CSV file
                     !
-                    if ( trim(output) == 'html' ) then
-                        write( unitNo,AFORMAT ) &
-                            '<table>', &
-                            '<tr><td>X</td><td>'//trim(fnName)//'(X)</td></tr>'
-                        do i = 0,steps
-                            write( unitNo, '(a,f12.6,a,f12.6,a)' ) &
-                                '<tr><td>', x(i), '</td><td>', y(i), '</td></tr>'
-                        enddo
-                        write( unitNo,AFORMAT ) &
-                            '</table>'
-                    else
-                        write( unitNo,AFORMAT ) &
-                            '<pre>', '      X     ,      '//trim(fnName)//'(X)'
-                        do i = 0,steps
-                            write( unitNo, '(f12.6,a,f12.6)' ) x(i), ',', y(i)
-                        enddo
-                        write( unitNo,AFORMAT ) &
-                            '</pre>'
-                    endif
+                    !if ( trim(output) == 'html' ) then
+                    !    write( unitNo,AFORMAT ) &
+                    !        '<table>', &
+                    !        '<tr><td>X</td><td>'//trim(fnName)//'(X)</td></tr>'
+                    !    do i = 0,steps
+                    !        write( unitNo, '(a,f12.6,a,f12.6,a)' ) &
+                    !            '<tr><td>', x(i), '</td><td>', y(i), '</td></tr>'
+                    !    enddo
+                    !    write( unitNo,AFORMAT ) &
+                    !        '</table>'
+                    !else
+                    !    write( unitNo,AFORMAT ) &
+                    !        '<pre>', '      X     ,      '//trim(fnName)//'(X)'
+                    !    do i = 0,steps
+                    !        write( unitNo, '(f12.6,a,f12.6)' ) x(i), ',', y(i)
+                    !    enddo
+                    !    write( unitNo,AFORMAT ) &
+                    !        '</pre>'
+                    !endif
 
-                end if
+                !end if
 
 
             case ('/shutdown') ! to terminate program
@@ -189,23 +226,94 @@ contains
                 "<b>Example: GET method</b>", &
                 "<form action='calc' method='get'>", &
                 "<p>", &
-                "Function: f(x) =", &
-                "<select name='function'>", &
-                "    <option value='sin' selected>sin(x)</option>", &
-                "    <option value='cos'>cos(x)</option>", &
-                "    <option value='J0'>J0(x)</option>", &
-                "</select>", &
-                "<br>", &
-                "Domain:", &
                 "<table>", &
                 "<tr>", &
-                "<td>Minimum = </td><td><input type='text' name='minimum' value='0.0'></td>", &
+                "<td>Amplituda toka - ? (kA)</td><td><input type='text' name='AIM' value='100'></td>", &
                 "</tr>", &
                 "<tr>", &
-                "<td>Maximum = </td><td><input type='text' name='maximum' value='1.0'></td>", &
+                "<td>Impuls toka =</td>", &
+                "<td><select name='ntok'>", &
+                "<option value='1' selected>10/350</option>", &
+                "<option value='2'>0,25/100</option>", &
+                "<option value='3'>Bijeksponencialnyj impuls</option>", &
+                "</select></td>", &
                 "</tr>", &
                 "<tr>", &
-                "<td>Steps = </td><td><input type='text' name='steps' value='10'></td>", &
+                "<td>Konstanty fronta (a) i hvosta (b) impulsa (1/mks)</td>", &
+                "<td><input type='text' name='at' value='0.0'></td><td><input type='text' name='bt' value='0.0'></td>", &
+                "</tr>", &
+                "<tr>", &
+                "<td>Dlina VL ot ob'ekta do PS-? (m)</td><td><input type='text' name='DL' value='1'>", &
+                "</tr>", &
+                "<tr>", &
+                "<td>Polnaja induktivnost VL -? (mkGn)</td><td><input type='text' name='alW' value='50'>", &
+                "</tr>", &
+                "<tr>", &
+                "<td>Udalenie tochki ot ob'ekta tochki udara molnii-(m)</td>", &
+                "<td><input type='text' name='dlo' value='2'></td>", &
+                "</tr>", &
+                "<tr>", &
+                "<td>Soprotivlenie zazemlenie ob'ekta -? (Om)</td>", &
+                "<td><input type='text' name='RN' value='30'></td>", &
+                "</tr>", &
+                "<tr>", &
+                "<td>Soprotivlenie zazemlenija VL na PS -? (Om)</td>", &
+                "<td><input type='text' name='RP' value='5'></td>", &
+                "</tr>", &
+                "<tr>", &
+                "<td>Chislo podzemnyh kabelej?</td>", &
+                "<td><select name='ncab'>", &
+                "<option value='1' selected>1</option>", &
+                "<option value='2'>2</option>", &
+                "</select></td>", &
+                "</tr>", &
+                "<tr>", &
+                "<td>Dlina podzemnogo kabelja # 1 -?  (m)</td>", &
+                "<td><input type='text' name='DL1' value='100'></td>", &
+                "</tr>", &
+                "<tr>", &
+                "<td>Dlina podzemnogo kabelja # 2 -?  (m)</td>", &
+                "<td><input type='text' name='DL2' value='100'></td>", &
+                "</tr>", &
+                "<tr>", &
+                "<td>Radius kabelja # 1- ? (m)</td>", &
+                "<td><input type='text' name='rs1' value='0.05'></td>", &
+                "</tr>", &
+                "<tr>", &
+                "<td>Radius kabelja # 2- ? (m)</td>", &
+                "<td><input type='text' name='rs2' value='0.05'></td>", &
+                "</tr>", &
+                "<tr>", &
+                "<td>Glubina ukladki kabelja # 1- ? (m)</td>", &
+                "<td><input type='text' name='h1' value='1'></td>", &
+                "</tr>", &
+                "<tr>", &
+                "<td>Glubina ukladki kabelja # 2- ? (m)</td>", &
+                "<td><input type='text' name='h2' value='1'></td>", &
+                "</tr>", &
+                "<tr>", &
+                "<td>Coprotivlenie v konce kabelja # 1 - ?  (Om)</td>", &
+                "<td><input type='text' name='RK1' value='1'></td>", &
+                "</tr>", &
+                "<tr>", &
+                "<td>Coprotivlenie v konce kabelja # 2 - ?  (Om)</td>", &
+                "<td><input type='text' name='RK2' value='1'></td>", &
+                "</tr>", &
+                "<tr>", &
+                "<td>Udelnoe soprotivlenie grunta - ? (Om m)</td>", &
+                "<td><input type='text' name='ro' value='200'></td>", &
+                "</tr>", &
+                "<tr>", &
+                "<td>Raschetnoe vremja TM, vremennoj shag DT  (mks)</td>", &
+                "<td><input type='text' name='TM' value='200'></td><td><input type='text' name='DT' value='1'></td>", &
+                "</tr>", &
+                "<tr>", &
+                "<td>Shag po dline kanala (m)</td>", &
+                "<td><input type='text' name='dd' value='1'></td>", &
+                "</tr>", &
+                "<tr>", &
+                "<td>Shag vyvoda na displej TTT, na pechat (mks)</td>", &
+                "<td><input type='text' name='TTT' value='1'></td><td><input type='text' name='TTP' value='1'></td>", &
                 "</tr>", &
                 "</table>", &
                 "<p>", &
@@ -231,27 +339,27 @@ contains
 
     end subroutine respond
 
-subroutine calc
+subroutine calc ( nunitNo, AIM, ntok, at, bt, DL, alW, dlo, RN, RP, &
+        ncab, DL1, rs1, h1, RK1, DL2, rs2, h2, RK2, ro, TM, DT, dd, TTT, TPP )
 
     implicit real*8 (a-h, o-y)
-    COMMON /U/ A, ncab
+    COMMON /U/ A
+
 
     DIMENSION AI1(2001), AI2(2001), U(2001)
     DIMENSION BI1(2001), BI2(2001), BU(2001), A(6, 6)
 
     f1(t) = aim * (t / tau1)**10 * dexp(-t / tau2) / coef / (1.d0 + (t / tau1)**10)
 
-    ! CALL system('chcp-1251')
-
-    PRINT*, 'Amplituda toka - ? (kA)'
-    read*, AIM
-    print*, 'Impuls toka  10/350 -(1)    0,25/100  - (2)'
-    print*, 'Bijeksponencialnyj impuls - (3)'
-    read*, ntok
+    !PRINT*, 'Amplituda toka - ? (kA)'
+    !read*, AIM
+    !print*, 'Impuls toka  10/350 -(1)    0,25/100  - (2)'
+    !print*, 'Bijeksponencialnyj impuls - (3)'
+    !read*, ntok
 
     if(ntok.eq.3) then
-        67    print*, 'Konstanty fronta (a) i hvosta (b) impulsa (1/mks)'
-        read*, at, bt
+    !    67    print*, 'Konstanty fronta (a) i hvosta (b) impulsa (1/mks)'
+    !    read*, at, bt
         tfr = dlog(at / bt) / (at - bt)
         umax = dexp(-bt * tfr) - dexp(-at * tfr)
         a00 = aim / umax  !!!!
@@ -260,17 +368,17 @@ subroutine calc
         tim = 5. * tim
         do k = 1, 500
             tk = tfr + k * dtim
-            utk = dexp(-bt * tk) - dexp(-at * tk)
+            utk = exp(-bt * tk) - exp(-at * tk)
             if(utk.le.umax / 2.) goto 66
         end do
         66    tim = tk
         zr1 = tfr
-        print*, 'Vremja maksimuma -', zr1, ' mks'
+        !print*, 'Vremja maksimuma -', zr1, ' mks'
         zr1 = tim
-        print*, 'Dlitelnost impulsa -', zr1, ' mks'
-        print*, 'Skorrektirovat parametry -? DA -(1), NET -(0)'
-        read*, mpar
-        if(mpar.eq.1) go to 67
+        !print*, 'Dlitelnost impulsa -', zr1, ' mks'
+        !print*, 'Skorrektirovat parametry -? DA -(1), NET -(0)'
+        !read*, mpar
+        !if(mpar.eq.1) go to 67
 
     end if
 
@@ -285,50 +393,51 @@ subroutine calc
         coef = 0.93d0
     end if
 
-    print*, 'Dlina VL ot ob"ekta do PS-? (m)'
-    read*, DL
-    print*, 'Polnaja induktivnost VL -? (mkGn)'
-    read*, alW
-    print*, 'Udalenie tochki ot ob"ekta tochki udara molnii-(m)'
-    read*, dlo
+    !print*, 'Dlina VL ot ob"ekta do PS-? (m)'
+    !read*, DL
+    !print*, 'Polnaja induktivnost VL -? (mkGn)'
+    !read*, alW
+    !print*, 'Udalenie tochki ot ob"ekta tochki udara molnii-(m)'
+    !read*, dlo
 
     alw1 = alw * dlo / dl
     dlp = dl - dlo
     alw2 = alw - alw1
-    print*, 'Soprotivlenie zazemlenie ob"ekta -? (Om)'
-    read*, RN
-    print*, 'Soprotivlenie zazemlenija VL na PS -? (Om)'
-    read*, RP
-    print*, 'Chislo podzemnyh kabelej 1 ili 2 ?'
-    read*, ncab
-    PRINT*, 'Dlina podzemnogo kabelja # 1 -?  (m)'
-    READ*, DL1
-    print*, 'Radius kabelja # 1- ? (m)'
-    read*, rs1
-    print*, 'Glubina ukladki kabelja # 1- ? (m)'
-    read*, h1
-    PRINT*, 'Coprotivlenie v konce kabelja # 1 - ?  (Om)'
-    READ*, RK1
+    !print*, 'Soprotivlenie zazemlenie ob"ekta -? (Om)'
+    !read*, RN
+    !print*, 'Soprotivlenie zazemlenija VL na PS -? (Om)'
+    !read*, RP
+    !print*, 'Chislo podzemnyh kabelej 1 ili 2 ?'
+    !read*, ncab
+    !PRINT*, 'Dlina podzemnogo kabelja # 1 -?  (m)'
+    !READ*, DL1
+    !print*, 'Radius kabelja # 1- ? (m)'
+    !read*, rs1
+    !print*, 'Glubina ukladki kabelja # 1- ? (m)'
+    !read*, h1
+    !PRINT*, 'Coprotivlenie v konce kabelja # 1 - ?  (Om)'
+    !READ*, RK1
 
-    if(ncab.eq.2) then
-        PRINT*, 'Dlina podzemnogo kabelja # 2 -?  (m)'
-        READ*, DL2
-        print*, 'Radius kabelja - # 2 ? (m)'
-        read*, rs2
-        print*, 'Glubina ukladki kabelja # 2- ? (m)'
-        read*, h2
-        PRINT*, 'Coprotivlenie v konce kabelja # 2 - ?  (Om)'
-        READ*, RK2
-    end if
+    !if(ncab.eq.2) then
+        !PRINT*, 'Dlina podzemnogo kabelja # 2 -?  (m)'
+        !READ*, DL2
+        !print*, 'Radius kabelja - # 2 ? (m)'
+        !read*, rs2
+        !print*, 'Glubina ukladki kabelja # 2- ? (m)'
+        !read*, h2
+        !PRINT*, 'Coprotivlenie v konce kabelja # 2 - ?  (Om)'
+        !READ*, RK2
+    !end if
 
-    print*, 'Udelnoe soprotivlenie grunta - ? (Om m)'
-    read*, ro
-    PRINT*, 'Raschetnoe vremja TM, vremennoj shag DT  (mks)'
-    READ*, TM, DT
-    print*, 'Shag po dline kanala (m)'
-    read*, dd
-    PRINT*, 'Shag vyvoda na displej TTT, na pechat (mks)'
-    READ*, TTT, TPP
+    !print*, 'Udelnoe soprotivlenie grunta - ? (Om m)'
+    !read*, ro
+    !PRINT*, 'Raschetnoe vremja TM, vremennoj shag DT  (mks)'
+    !READ*, TM, DT
+    !print*, 'Shag po dline kanala (m)'
+    !read*, dd
+    !PRINT*, 'Shag vyvoda na displej TTT, na pechat (mks)'
+    !READ*, TTT, TPP
+
     al1 = 0.2 * (dlog(2.d0 * dl1 / rs1) - 1.d0)
     if(h1.gt.rs1) then
         g1 = 6.283185 / ro / dlog(dl1 * dl1 / 2.d0 / rs1 / h1)
@@ -428,79 +537,79 @@ subroutine calc
     end if
 
     ZR1 = AIM
-    write(12, *) '  '
-    write(12, *) '                                  .  .2018'
-    WRITE(12, *) 'Raspredelenie toka molnii mezhdu podz. kommunikaciej,'
-    WRITE(12, *) '                VL i zazemlitelem ob"ekta '
-    WRITE(12, *) '                              Programma dart_uzip'
-    write(12, *) '         (gL-priblizhenie LR- priblizhenie VL)'
-    WRITE(12, *) '  '
-    WRITE(12, *) ' Amplituda toka =', ZR1, ' kA'
+    write(nunitNo, *) '  '
+    write(nunitNo, *) '                                  .  .2018'
+    WRITE(nunitNo, *) 'Raspredelenie toka molnii mezhdu podz. kommunikaciej,'
+    WRITE(nunitNo, *) '                VL i zazemlitelem ob"ekta '
+    WRITE(nunitNo, *) '                              Programma dart_uzip'
+    write(nunitNo, *) '         (gL-priblizhenie LR- priblizhenie VL)'
+    WRITE(nunitNo, *) '  '
+    WRITE(nunitNo, *) ' Amplituda toka =', ZR1, ' kA'
 
     if(ntok.eq.1) then
-        write(12, *) ' Impuls toka molnii 10/350 mks'
+        write(nunitNo, *) ' Impuls toka molnii 10/350 mks'
     end if
     if(ntok.eq.2) THEN
-        write(12, *) ' Impuls toka molnii 0,25/100 mks'
+        write(nunitNo, *) ' Impuls toka molnii 0,25/100 mks'
     end if
     IF(NTOK.EQ.3) THEN
-        write(12, *) ' Bijeksponencialnyj impuls toka'
+        write(nunitNo, *) ' Bijeksponencialnyj impuls toka'
         zr1 = 1. / at
         zr2 = 1. / bt
-        write(12, *) ' Postojannye vremeni Tf, Timp = ', zr1, zr2, ' mks'
+        write(nunitNo, *) ' Postojannye vremeni Tf, Timp = ', zr1, zr2, ' mks'
     end if
 
     zr1 = dl
-    write(12, *) ' Dlina VL - ', zr1, ' m'
+    write(nunitNo, *) ' Dlina VL - ', zr1, ' m'
     zr1 = alw
-    write(12, *) ' Polnaja induktivnost VL - ', zr1, ' mkGn'
+    write(nunitNo, *) ' Polnaja induktivnost VL - ', zr1, ' mkGn'
     zr1 = dlo
-    write(12, *) ' Udalenie tochki udara ot ob"ekta - ', zr1, ' m'
+    write(nunitNo, *) ' Udalenie tochki udara ot ob"ekta - ', zr1, ' m'
     zr1 = rn
-    write(12, *) ' Soprotivlenie zazemlenija ob"ekta - ', zr1, ' Om'
+    write(nunitNo, *) ' Soprotivlenie zazemlenija ob"ekta - ', zr1, ' Om'
     zr1 = rp
-    write(12, *) ' Soprotivlenie zazemlenija PS - ', zr1, ' Om'
+    write(nunitNo, *) ' Soprotivlenie zazemlenija PS - ', zr1, ' Om'
 
     ZR1 = DL1
-    WRITE(12, *) ' Dlina podzemnogo kabelja # 1- ', ZR1, ' m'
+    WRITE(nunitNo, *) ' Dlina podzemnogo kabelja # 1- ', ZR1, ' m'
     zr1 = rs1
-    write(12, *) ' Radius podzemnogo kabelja # 1- ', zr1, ' m'
+    write(nunitNo, *) ' Radius podzemnogo kabelja # 1- ', zr1, ' m'
     zr1 = h1
-    write(12, *) ' Glubina podzemnogo kabelja # 1- ', zr1, ' m'
+    write(nunitNo, *) ' Glubina podzemnogo kabelja # 1- ', zr1, ' m'
     zr1 = al1
-    write(12, *) ' Pogonnaja induktivnost kabelja #1- ', zr1, ' MkGn/m'
+    write(nunitNo, *) ' Pogonnaja induktivnost kabelja #1- ', zr1, ' MkGn/m'
     zr2 = g1
-    write(12, *) ' Pogonnaja provodimost kabelja #1- ', zr1, ' 1/Om m'
+    write(nunitNo, *) ' Pogonnaja provodimost kabelja #1- ', zr1, ' 1/Om m'
     ZR1 = RK1
-    WRITE(12, *) ' Soprotivlenie v konce kabelja # 1- ', zr1, ' Om'
+    WRITE(nunitNo, *) ' Soprotivlenie v konce kabelja # 1- ', zr1, ' Om'
 
     if(ncab.eq.2) then
         ZR1 = DL2
-        WRITE(12, *) ' Dlina podzemnogo kabelja # 2- ', ZR1, ' m'
+        WRITE(nunitNo, *) ' Dlina podzemnogo kabelja # 2- ', ZR1, ' m'
         zr1 = rs2
-        write(12, *) ' Radius podzemnogo kabelja # 2- ', zr1, ' m'
+        write(nunitNo, *) ' Radius podzemnogo kabelja # 2- ', zr1, ' m'
         zr1 = h2
-        write(12, *) ' Glubina podzemnogo kabelja # 2- ', zr1, ' m'
+        write(nunitNo, *) ' Glubina podzemnogo kabelja # 2- ', zr1, ' m'
         zr1 = al2
-        write(12, *) ' Pogonnaja induktivnost kabelja #2- ', zr1, ' MkGn/m'
+        write(nunitNo, *) ' Pogonnaja induktivnost kabelja #2- ', zr1, ' MkGn/m'
         zr2 = g2
-        write(12, *) ' Pogonnaja provodimost kabelja #2- ', zr1, ' 1/Om m'
+        write(nunitNo, *) ' Pogonnaja provodimost kabelja #2- ', zr1, ' 1/Om m'
         ZR1 = RK2
-        WRITE(12, *) ' Soprotivlenie v konce kabelja # 2- ', zr1, ' Om'
+        WRITE(nunitNo, *) ' Soprotivlenie v konce kabelja # 2- ', zr1, ' Om'
     end if
 
     zr1 = ro
-    write(12, *) ' Udelnoe soprotivlenie grunta - ', zr1, ' Om m '
+    write(nunitNo, *) ' Udelnoe soprotivlenie grunta - ', zr1, ' Om m '
     ZR1 = TM
     ZR2 = DT
-    WRITE(12, *) 'Vremja rascheta, shag rascheta', ZR1, ZR2, ' mks'
+    WRITE(nunitNo, *) 'Vremja rascheta, shag rascheta', ZR1, ZR2, ' mks'
     zr1 = dd
-    write(12, *) 'Prostranstvennyj shag rascheta = ', zr1, ' m'
-    WRITE(12, *) '           ----------'
-    write(12, *) '  '
-    write(12, 310)
-    write(12, 311)
-    write(12, *) '  '
+    write(nunitNo, *) 'Prostranstvennyj shag rascheta = ', zr1, ' m'
+    WRITE(nunitNo, *) '           ----------'
+    write(nunitNo, *) '  '
+    write(nunitNo, 310)
+    write(nunitNo, 311)
+    write(nunitNo, *) '  '
 
     TTT = TTT - 0.1 * DT
     TPP = TPP - 0.1 * DT
@@ -570,7 +679,7 @@ subroutine calc
         if(ntok.lt.3) then
             AI = F1(T)
         else
-            ai = a00 * (dexp(-bt * t) - dexp(-at * t))
+            ai = a00 * (exp(-bt * t) - exp(-at * t))
         end if
 
         N11 = N1 - 1
@@ -661,7 +770,7 @@ subroutine calc
 
         end if
 
-        CALL GAUSS
+        CALL GAUSS(ncab)
 
         if(ncab.eq.2) then
             tok1 = a(5, 1)
@@ -731,10 +840,10 @@ subroutine calc
 
             if(ncab.eq.2) then
                 write(14, 302)zr1, ai, tok4, tok5, tok3
-                write(12, 312)zr1, ai, tok1, tok2, tok3
+                write(nunitNo, 312)zr1, ai, tok1, tok2, tok3
             else
                 write(14, 322)zr1, ai, tok4, tok3
-                write(12, 312)zr1, ai, tok1, tok2, tok3
+                write(nunitNo, 312)zr1, ai, tok1, tok2, tok3
             end if
         end if
 
@@ -750,9 +859,9 @@ subroutine calc
 END subroutine calc
 
 
-SUBROUTINE GAUSS
+SUBROUTINE GAUSS ( ncab )
     IMPLICIT REAL*8(A-H, O-Z)
-    COMMON /U/ A, ncab
+    COMMON /U/ A
 
     DIMENSION A(6, 6)
     N = 5
