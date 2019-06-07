@@ -1,0 +1,17 @@
+language: c
+sudo: required
+before_install:
+  - sudo apt-get install gfortran make
+
+script:
+  - make dart_cgi
+deploy:
+  provider: releases
+  api_key:
+    secure: 
+  file: 
+    - dart_cgi
+  skip_cleanup: true
+  on:
+    repo: szhilkin/fortran_cgi
+    tags: true
