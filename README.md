@@ -1,2 +1,2 @@
 # fortran_cgi
-Running FORTRAN 90 program as FastCGI
+Running FORTRAN 90 program as FastCGI using NGINX
