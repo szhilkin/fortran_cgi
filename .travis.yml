@@ -11,4 +11,6 @@ deploy:
   file: dart_cgi
   skip_cleanup: true
   on:
+    tags: true
+    branch: master
     repo: szhilkin/fortran_cgi
