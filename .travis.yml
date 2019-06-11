@@ -2,7 +2,6 @@ language: c
 sudo: required
 before_install:
   - sudo apt-get install gfortran make
-
 script:
   - make dart_cgi
 deploy:
