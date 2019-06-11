@@ -1,16 +1,19 @@
 language: c
 sudo: required
 before_install:
-  - sudo apt-get install gfortran make libfcgi-dev
+- sudo apt-get install gfortran make libfcgi-dev
 script:
-  - make dart_cgi
+- make dart_cgi
 deploy:
   provider: releases
   api_key:
     secure: 
-  file: 
-    - dart_cgi
+  file:
+  - dart_cgi
   skip_cleanup: true
   on:
     repo: szhilkin/fortran_cgi
     tags: true
+dd:
+- openssl aes-256-cbc -K $encrypted_56e378e9dfea_key -iv $encrypted_56e378e9dfea_iv
+  -in github_deploy_key.enc -out github_deploy_key -d
