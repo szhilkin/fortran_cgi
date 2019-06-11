@@ -7,13 +7,7 @@ script:
 deploy:
   provider: releases
   api_key:
-    secure: 
-  file:
-  - dart_cgi
-  skip_cleanup: true
+    secure: lEfMBaxC7leqKe38fkp1uxEvKkA9yeE2BsDbEitu200pA/nyph/k2kWm/uv0UJEpOLX/+59PNtpKTylfi/2s1pAmJTpwumPtz38L3U7ivQ8oIaxFMvUycrDM4RpcsMh6g/dvkKUG3I3gNXGHvxbkAJflITCL1BhMMJj/RL9CuBLCIcEntYWzb0Hn4FkrVY8leXK++Fo+iZUCGdK2NUy2OtNsblThi6U8beUKKSDs9jWZKvJ4NGpZL28HLtoZcMI0MvWpxa0wvnVspccU908/xuU6foBO4qQNVK2if4VB3JztRCAtxNH4L33EXIRgqA2sZ4m3OKIGvajzcrwT32NWMrEKgm5pMB3eyPpUwqGn6oUi1ndjvfQymaBLQ5CDUkEdb7yD6/1EdODxpP/lpyWBuzg6kcyZtKmly5aRr7jESGeZZcPqm2GBDp2DR+szec1ml/IsRf+GcXcdmaV6BZq7jStZgiQyXBsWgruoKMhKhbIV0KEk8GIpotfZbfPNb4wKMQHuc4OMPrdv3+N9ydsJ4PS1kme9wHadjUuftpu9E8IpbV9d+VRxyUkIFSeTSykzCTzDrjwxeVXkl4WBoBxe/5CivckwisSzxUELkPWS4RrtRMMsnoe4Lc2inrbmHmCV3fOkeIskecdOUObLChVENN+O9dCqdLiQcn68iqsjLJk=
+  file: dart_cgi
   on:
     repo: szhilkin/fortran_cgi
-    tags: true
-dd:
-- openssl aes-256-cbc -K $encrypted_56e378e9dfea_key -iv $encrypted_56e378e9dfea_iv
-  -in github_deploy_key.enc -out github_deploy_key -d
