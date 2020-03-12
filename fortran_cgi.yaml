@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fortran_cgi
+  namespace: default
+  labels:
+    app: fortran_cgi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fortran_cgi
+  template:
+    metadata:
+      labels:
+        app: fortran_cgi
+    spec:
+      containers:
+      - name: fortran_cgi
+        image: hub.docker.com/szhilkin/fortran_cgi:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+          name: http
+        resources:
+          requests:
+            cpu: 100m
+            memory: 16Mi
+          limits:
+            cpu: 250m
+            memory: 32Mi
+        readinessProbe:
+          httpGet:
+            path: /
+            port: http
+          initialDelaySeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fortran_cgi
+  namespace: default
+  labels:
+    app: fortran_cgi
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
+  selector:
+    app: fortran_cgi
