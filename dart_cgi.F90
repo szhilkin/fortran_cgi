@@ -455,85 +455,85 @@ subroutine calc ( nunitNo, AIM, ntok, at, bt, DL, alW, dlo, RN, RP, &
     END IF
 
     ZR1 = AIM
-    write(14, *) '  '
-    write(14, *) '                                  .  .2018'
-    WRITE(14, *) 'Raspredelenie toka molnii mezhdu podz. kommunikaciej,'
-    WRITE(14, *) '                VL i zazemlitelem ob"ekta '
-    WRITE(14, *) '                              Programma dart_uzip'
-    write(14, *) '         (gL-priblizhenie LR- priblizhenie VL)'
-    WRITE(14, *) '  '
-    WRITE(14, *) ' Amplituda toka =', ZR1, ' kA'
+    !write(14, *) '  '
+    !write(14, *) '                                  .  .2018'
+    !WRITE(14, *) 'Raspredelenie toka molnii mezhdu podz. kommunikaciej,'
+    !WRITE(14, *) '                VL i zazemlitelem ob"ekta '
+    !WRITE(14, *) '                              Programma dart_uzip'
+    !write(14, *) '         (gL-priblizhenie LR- priblizhenie VL)'
+    !WRITE(14, *) '  '
+    !WRITE(14, *) ' Amplituda toka =', ZR1, ' kA'
 
     if(ntok.eq.1) then
-        write(14, *) ' Impuls toka molnii 10/350 mks'
+        !write(14, *) ' Impuls toka molnii 10/350 mks'
     end if
     if(ntok.eq.2) THEN
-        write(14, *) ' Impuls toka molnii 0,25/100 mks'
+        !write(14, *) ' Impuls toka molnii 0,25/100 mks'
     end if
     IF(NTOK.EQ.3) THEN
-        write(14, *) ' Bijeksponencialnyj impuls toka'
+        !write(14, *) ' Bijeksponencialnyj impuls toka'
         zr1 = 1. / at
         zr2 = 1. / bt
-        write(14, *) ' Postojannye vremeni Tf, Timp = ', zr1, zr2, ' mks'
+        !write(14, *) ' Postojannye vremeni Tf, Timp = ', zr1, zr2, ' mks'
     end if
 
     zr1 = dl
-    write(14, *) ' Dlina VL - ', zr1, ' m'
+    !write(14, *) ' Dlina VL - ', zr1, ' m'
     zr1 = alw
-    write(14, *) ' Polnaja induktivnost VL - ', zr1, ' mkGn'
+    !write(14, *) ' Polnaja induktivnost VL - ', zr1, ' mkGn'
     zr1 = dlo
-    write(14, *) ' Udalenie tochki udara ot ob"ekta - ', zr1, ' m'
+    !write(14, *) ' Udalenie tochki udara ot ob"ekta - ', zr1, ' m'
     zr1 = rn
-    write(14, *) ' Soprotivlenie zazemlenija ob"ekta - ', zr1, ' Om'
+    !write(14, *) ' Soprotivlenie zazemlenija ob"ekta - ', zr1, ' Om'
     zr1 = rp
-    write(14, *) ' Soprotivlenie zazemlenija PS - ', zr1, ' Om'
+    !write(14, *) ' Soprotivlenie zazemlenija PS - ', zr1, ' Om'
 
     ZR1 = DL1
-    WRITE(14, *) ' Dlina podzemnogo kabelja # 1- ', ZR1, ' m'
+    !WRITE(14, *) ' Dlina podzemnogo kabelja # 1- ', ZR1, ' m'
     zr1 = rs1
-    write(14, *) ' Radius podzemnogo kabelja # 1- ', zr1, ' m'
+    !write(14, *) ' Radius podzemnogo kabelja # 1- ', zr1, ' m'
     zr1 = h1
-    write(14, *) ' Glubina podzemnogo kabelja # 1- ', zr1, ' m'
+    !write(14, *) ' Glubina podzemnogo kabelja # 1- ', zr1, ' m'
     zr1 = al1
-    write(14, *) ' Pogonnaja induktivnost kabelja #1- ', zr1, ' MkGn/m'
+    !write(14, *) ' Pogonnaja induktivnost kabelja #1- ', zr1, ' MkGn/m'
     zr2 = g1
-    write(14, *) ' Pogonnaja provodimost kabelja #1- ', zr2, ' 1/Om m'
+    !write(14, *) ' Pogonnaja provodimost kabelja #1- ', zr2, ' 1/Om m'
     ZR1 = RK1
-    WRITE(14, *) ' Soprotivlenie v konce kabelja # 1- ', zr1, ' Om'
+    !WRITE(14, *) ' Soprotivlenie v konce kabelja # 1- ', zr1, ' Om'
 
     if(ncab.eq.2) Then
         ZR1 = DL2
-        WRITE(14, *) ' Dlina podzemnogo kabelja # 2- ', ZR1, ' m'
+        !WRITE(14, *) ' Dlina podzemnogo kabelja # 2- ', ZR1, ' m'
         zr1 = rs2
-        write(14, *) ' Radius podzemnogo kabelja # 2- ', zr1, ' m'
+        !write(14, *) ' Radius podzemnogo kabelja # 2- ', zr1, ' m'
         zr1 = h2
-        write(14, *) ' Glubina podzemnogo kabelja # 2- ', zr1, ' m'
+        !write(14, *) ' Glubina podzemnogo kabelja # 2- ', zr1, ' m'
         zr1 = al2
-        write(14, *) ' Pogonnaja induktivnost kabelja #2- ', zr1, ' MkGn/m'
+        !write(14, *) ' Pogonnaja induktivnost kabelja #2- ', zr1, ' MkGn/m'
         zr2 = g2
-        write(14, *) ' Pogonnaja provodimost kabelja #2- ', zr2, ' 1/Om m'
+        !write(14, *) ' Pogonnaja provodimost kabelja #2- ', zr2, ' 1/Om m'
         ZR1 = RK2
-        WRITE(14, *) ' Soprotivlenie v konce kabelja # 2- ', zr1, ' Om'
+        !WRITE(14, *) ' Soprotivlenie v konce kabelja # 2- ', zr1, ' Om'
     end if
 
     zr1 = ro
-    write(14, *) ' Udelnoe soprotivlenie grunta - ', zr1, ' Om m '
+    !write(14, *) ' Udelnoe soprotivlenie grunta - ', zr1, ' Om m '
     ZR1 = TM
     ZR2 = DT
-    WRITE(14, *) 'Vremja rascheta, shag rascheta', ZR1, ZR2, ' mks'
+    !WRITE(14, *) 'Vremja rascheta, shag rascheta', ZR1, ZR2, ' mks'
     zr1 = dd
-    write(14, *) 'Prostranstvennyj shag rascheta = ', zr1, ' m'
-    WRITE(14, *) '           ----------'
-    write(14, *) '  '
+    !write(14, *) 'Prostranstvennyj shag rascheta = ', zr1, ' m'
+    !WRITE(14, *) '           ----------'
+    !write(14, *) '  '
 
     if(ncab.eq.2) then
-        write(14, 300)
-        write(14, 301)
-        write(14, *) '  '
+        !write(14, 300)
+        !write(14, 301)
+        !write(14, *) '  '
     else
-        write(14, 320)
-        write(14, 321)
-        write(14, *) '  '
+        !write(14, 320)
+        !write(14, 321)
+        !write(14, *) '  '
     end if
 
     ZR1 = AIM
@@ -839,10 +839,10 @@ subroutine calc ( nunitNo, AIM, ntok, at, bt, DL, alW, dlo, RN, RP, &
             zr1 = t
 
             if(ncab.eq.2) then
-                write(14, 302)zr1, ai, tok4, tok5, tok3
+                !write(14, 302)zr1, ai, tok4, tok5, tok3
                 write(nunitNo, 312)zr1, ai, tok1, tok2, tok3
             else
-                write(14, 322)zr1, ai, tok4, tok3
+                !write(14, 322)zr1, ai, tok4, tok3
                 write(nunitNo, 312)zr1, ai, tok1, tok2, tok3
             end if
         end if
