@@ -4,16 +4,16 @@ metadata:
   name: fortran_cgi
   namespace: default
   labels:
-    app: fortran_cgi
+    app: fortrancgi
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: fortran_cgi
+      app: fortrancgi
   template:
     metadata:
       labels:
-        app: fortran_cgi
+        app: fortrancgi
     spec:
       containers:
       - name: fortran_cgi
@@ -38,10 +38,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: fortran_cgi
+  name: fortrancgi
   namespace: default
   labels:
-    app: fortran_cgi
+    app: fortrancgi
 spec:
   ports:
   - port: 80
@@ -49,4 +49,4 @@ spec:
     protocol: TCP
     name: http
   selector:
-    app: fortran_cgi
+    app: fortrancgi
