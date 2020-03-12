@@ -16,8 +16,8 @@ spec:
         app: fortrancgi
     spec:
       containers:
-      - name: fortran_cgi
-        image: hub.docker.com/szhilkin/fortran_cgi:latest
+      - name: fortrancgi
+        image: szhilkin/fortran_cgi:latest
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80
